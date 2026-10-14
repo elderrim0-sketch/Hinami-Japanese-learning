@@ -1,0 +1,16 @@
+/* Hanami V19: comprehension-first presentation */
+.c19-mode{margin:20px 0;padding:24px 28px;border-radius:23px;background:linear-gradient(118deg,rgba(232,244,235,.96),rgba(255,246,239,.98));border:1px solid rgba(47,98,75,.17);box-shadow:0 14px 34px rgba(55,75,59,.07)}
+.c19-mode h2{font-size:21px;color:#224b3d;margin:0 0 6px;font-weight:850}
+.c19-mode p{font-size:13px;max-width:680px;color:#526a5f;margin:5px 0 18px;line-height:1.65}
+.c19-switch{display:flex;flex-wrap:wrap;gap:11px}
+.c19-switch button{background:rgba(255,255,255,.8);border:1px solid #d6dfd7;padding:14px 18px;border-radius:15px;color:#385349;font-weight:800;font-size:13px;box-shadow:0 5px 0 rgba(52,73,52,.07);cursor:pointer;transition:transform .2s,border-color .2s,background .2s}
+.c19-switch button:hover{transform:translateY(-2px)}
+.c19-switch button.active{background:linear-gradient(155deg,#234e40,#317260);color:#fff;border-color:#234e40;box-shadow:0 5px 0 #1a3b30,0 10px 25px rgba(38,82,64,.2)}
+.c19-metrics{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.c19-metrics span{background:#fff;color:#43665a;border:1px solid #e7eee6;border-radius:100px;padding:7px 12px;font-size:11px;font-weight:750}
+.c19-listening-card{background:linear-gradient(140deg,#fffefd,#f8fcfa)}
+.c19-listening-card h2{color:#28513f}.c19-listening-card textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:100px;border:1.5px solid #c7dbcf;border-radius:15px;background:#fff;padding:16px;font:inherit;line-height:1.5;color:#29493a;margin:12px 0 15px}
+.c19-listening-card textarea:focus{outline:2px solid #8dbbad;outline-offset:1px}
+.c19-listening-card .c18-feedback{margin:12px 0 17px;padding:15px;border-radius:12px}
+@media(max-width:680px){.c19-mode{padding:18px 16px;margin:14px 0;border-radius:17px}.c19-switch{flex-direction:column}.c19-switch button{width:100%;text-align:left}.c19-metrics{gap:6px}.c19-metrics span{font-size:10px}}
+.nav-link.c19-more-tools{margin-top:12px!important;background:rgba(54,103,81,.07)!important;border:1px dashed rgba(47,103,84,.3)!important;color:#37654e!important;font-size:12px!important;opacity:.96}
+.nav-link.c19-more-tools:hover{background:rgba(54,103,81,.14)!important}
