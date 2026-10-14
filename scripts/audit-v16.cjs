@@ -1,0 +1,21 @@
+const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert');
+const dir=path.resolve(__dirname,'../source');const read=x=>fs.readFileSync(path.join(dir,x),'utf8');
+const ctx={window:{},document:{getElementById(){return null}},navigator:{},Date,Map,Set,Promise,Math,console,URL,URLSearchParams,SpeechSynthesisUtterance:function(t){this.text=t},speechSynthesis:{cancel(){},getVoices(){return[{lang:'ja-JP',name:'Japanese'}]},speak(u){u.onend?.()}},setInterval,clearInterval};ctx.window.speechSynthesis=ctx.speechSynthesis;ctx.window.SpeechSynthesisUtterance=ctx.SpeechSynthesisUtterance;
+vm.createContext(ctx);
+for(const script of ['real-life-content.js','anime-content.js','blind-scenes.js','immersion-v16.js','pitch-v16.js'])vm.runInContext(read(script),ctx);
+assert.equal(ctx.window.HANAMI_REAL_SCENES.length,25);assert.equal(ctx.window.HANAMI_ANIME_CONTENT.scenes.length,30);assert.equal(ctx.window.HANAMI_BLIND_SCENES.length,40);
+const ids=new Set();for(let scene of ctx.window.HANAMI_BLIND_SCENES){assert(!ids.has(scene.id));ids.add(scene.id);assert.equal(scene.options.length,3);assert(scene.answer>=0&&scene.answer<3);assert(scene.lines.length===2&&scene.lines.every(x=>x.ja.length>3));assert(scene.tip.length>10)}
+for(const level of ['N5','N4','N3','N2','N1'])assert.equal(ctx.window.HANAMI_BLIND_SCENES.filter(x=>x.level===level).length,8);
+let renders=0,saves=0;const state={settings:{sound:true,voiceId:''},truePath:{clears:{}},immersion:{level:'N5',tab:'practice',practice:{},exams:[],dictation:{},shadow:{},speed:.85,records:{}}};const a={state,save(){saves++},render(){renders++},toast(x){if(x?.startsWith('Error'))throw Error(x)},esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),addXP(){},addDaily(){},setPage(){}};
+const immersion=ctx.window.createHanamiImmersionV16(a);assert(immersion.page().includes('Listening Dojo'));
+let seen=immersion._debug.cold;assert(seen.length===40);
+immersion.action('imBeginExam',{});assert(immersion.page().includes('No subtitles')||immersion.page().includes('UNSEEN CHECK'));
+let q=seen[0];immersion.action('imChoose',{dataset:{index:String(q.answer)}});assert(!state.immersion.exams.length);
+immersion.action('imPlay',{});immersion.action('imChoose',{dataset:{index:String(q.answer)}});assert(immersion.page().includes('Next unheard'));
+immersion.action('imExamNext',{});assert(immersion.page().includes('UNSEEN CHECK'));
+for(let i=1;i<4;i++){immersion.action('imPlay',{});immersion.action('imChoose',{dataset:{index:String(seen[i].answer)}});immersion.action('imExamNext',{});}assert.equal(state.immersion.exams.length,1);assert.equal(state.immersion.exams[0].score,4);assert.equal(immersion._debug.unseenPasses('N5'),1);
+const pitch=ctx.window.createHanamiPitchV16({...a,speak(){},data:{vocab:{N5:[],N4:[],N3:[],N2:[],N1:[]}}});let html=pitch.page();assert(html.includes('accent drop [1]'));assert(html.includes('<svg'));
+pitch.action('piChoose',{dataset:{word:'橋',reading:'はし'}});assert(pitch.page().includes('accent drop [2]'));
+pitch.action('piChoose',{dataset:{word:'不存在',reading:'ふそんざい'}});assert(pitch.page().includes('not found'));
+let htmlText=fs.readFileSync(path.resolve(dir,'../index.html'),'utf8');for(let v of ['v16.css','blind-scenes.js','immersion-v16.js','pitch-v16.js'])assert(htmlText.includes(v));
+console.log('V16 content and state-machine checks passed: 25 everyday + 30 anime + 40 holdout scenes; pitch charts; audio gating; four-question result; missing accents.');

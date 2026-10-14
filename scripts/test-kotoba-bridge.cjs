@@ -1,0 +1,23 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('/mnt/data/Kotoba-Hanami-v2.6/background.js','utf8');
+const from=source.indexOf('const KM_HANAMI_LIMIT');
+const to=source.indexOf('chrome.runtime.onMessage.addListener',from);
+assert(from>0&&to>from,'testable adapter region missing');
+const store={knownWords:['知る'],ankiVocabularyLearning:['走る'],wordStatuses:{'猫':'known'},kotobaActivity:{recent:[{kind:'card',word:'見る',at:111}]}};
+const chrome={storage:{local:{get:async keys=>typeof keys==='object'&&!Array.isArray(keys)?{...keys,...store}:Object.fromEntries(keys.map(k=>[k,store[k]])),set:async value=>Object.assign(store,value)}}};
+const ctx={chrome,Date,URL,console};vm.createContext(ctx);
+vm.runInContext(source.slice(from,to),ctx);
+(async()=>{
+ await ctx.kmRememberHanamiMine({word:'魔法',reading:'まほう',meaning:'magic',sentence:'この魔法は強い。',title:'Frieren',url:'https://example.org/test',seconds:41},'Hanami');
+ await ctx.kmRememberHanamiMine({word:'魔法',reading:'まほう',meaning:'magic',sentence:'この魔法は強い。',title:'Frieren'},'Anki');
+ assert.equal(store.kotobaHanamiMines.length,1,'duplicate mined cards are merged');
+ const result=await ctx.kmHanamiSnapshot();
+ assert.equal(result.schema,'kotoba-hanami-v1');
+ assert.equal(result.mines.length,1);
+ assert(result.known.includes('知る'));
+ assert(result.learning.includes('走る'));
+ assert.equal(result.statuses['猫'],'known');
+ assert.equal(ctx.kmHanamiAddress('https://example.github.io/hanami/index.html#kotoba'),'https://example.github.io/hanami/');
+ assert.equal(ctx.kmHanamiAddress('file:///home/user/hanami.html'),null);
+ console.log('Extension unit checks passed: saved mining card, deduplication, existing status transfer, paired URL parsing');
+})().catch(err=>{console.error(err);process.exit(1)});

@@ -1,0 +1,38 @@
+from playwright.sync_api import sync_playwright
+from pathlib import Path
+h=Path('/mnt/data/Hanami_Japanese_v17_Standalone.html').read_text()
+# no origin permissions on about:blank; mock localStorage & IndexedDB for this runtime.
+with sync_playwright() as p:
+ b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-web-security','--disable-gpu'])
+ page=b.new_page(viewport={'width':1280,'height':850})
+ page.add_init_script('''(() => {let m={}; Object.defineProperty(window,'localStorage',{value:{getItem:k=>m[k]||null,setItem:(k,v)=>{m[k]=v},removeItem:k=>{delete m[k]},clear:()=>{m={}}}});})();''')
+ errs=[]
+ page.on('pageerror',lambda e:errs.append(str(e)))
+ try:
+  page.set_content(h,wait_until='domcontentloaded',timeout=45000)
+  page.wait_for_timeout(1200)
+  print('nav links',page.locator('.nav-link').count(),'errors',errs[:5])
+  page.locator('[data-page="immersive17"]').click(timeout=12000)
+  page.wait_for_timeout(750)
+  print('episodes displayed',page.locator('.v17-episode').count())
+  print('title',page.locator('.v17-banner h1').inner_text())
+  page.screenshot(path='/mnt/data/Hanami_V17_Studio.png',full_page=False)
+  page.locator('[data-act="v17Open"]').first.click(timeout=10000)
+  page.wait_for_timeout(300)
+  print('scene',page.locator('.v17-scene').count(),'locked',page.locator('[data-act="v17Answer"]').first.is_disabled())
+  page.screenshot(path='/mnt/data/Hanami_V17_Episode.png',full_page=False)
+  page.locator('[data-act="v17Back"]').click()
+  page.locator('[data-act="v17Tab"][data-tab="clinics"]').click()
+  print('clinics',page.locator('.v17-clinic').count())
+  page.locator('[data-act="v17Tab"][data-tab="native"]').click()
+  print('native input',page.locator('#v17Tsv').count())
+  page.locator('[data-act="v17Tab"][data-tab="exam"]').click()
+  print('exam',page.locator('.v17-bank').count())
+  page.locator('[data-act="v17Tab"][data-tab="report"]').click()
+  print('report',page.locator('.v17-check').count())
+  print('errors',errs[:12])
+  page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(500)
+  page.screenshot(path='/mnt/data/Hanami_V17_Mobile.png',full_page=False)
+  print('width',page.evaluate('document.documentElement.scrollWidth'),page.evaluate('document.documentElement.clientWidth'))
+ except Exception as e: print('SMOKE FAIL',repr(e));print('errors',errs[:10])
+ finally:b.close()
