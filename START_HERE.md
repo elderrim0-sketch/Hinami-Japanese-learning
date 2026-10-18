@@ -18,3 +18,6 @@ Open the Kotoba pairing page, click **Export Kotoba → Hanami JSON**, then impo
 - **Previously mined sentence text was not retained in old Kotoba releases**. New saves include sentence, reading, meaning, source title and timestamp; old vocabulary flags and up to 80 recent saved word labels can be imported without inventing missing context.
 - Audio/video from Kotoba are **not** copied into Hanami. Play a sentence using Hanami's configured voice or open the original source link.
 - This is a comprehension review tool, not an estimate of actual anime listening percentage.
+
+## V21: Flashcard Studio
+Hanami now has a dedicated **Flashcards** sidebar section: import an Anki `.apkg` deck, study the word meaning with optional images/audio, and review Kotoba mined words in the same queue. No extension update beyond Kotoba v2.6 is needed. See `README_V21.md`. The separate Flashcards → Backup cards export does not include imported media; keep the original `.apkg` as a media backup.

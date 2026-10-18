@@ -1,5 +1,5 @@
-# Hanami V20 — Kotoba Connected
+# Hanami V21 — Anki + Kotoba Flashcards
 
-Hanami V20 adds a privacy-first connection to the Kotoba Miner v2.6 Japanese subtitle-mining extension. Existing N5–N1 Japanese learning, anime immersion, Level 1–100 path, focus garden and progress data remain available.
+Hanami's new Flashcards Studio imports Anki `.apkg` decks (with optional images and audio) and combines them with the Japanese sentences you mine from Kotoba. Lessons, themes, Listening-First Journey, Kotoba pairing, and progress are preserved from V20.
 
-Open **START_HERE.md** for setup instructions or **README_V20.md** for detailed feature notes and testing limitations.
+**Start here:** Read `README_V21.md` for import instructions, limitations and essential backup guidance.
